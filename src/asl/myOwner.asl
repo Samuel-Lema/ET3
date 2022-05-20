@@ -1,6 +1,7 @@
 /* Initial beliefs and rules */
 
 state(5).
+dinero(3000).
 
 /* Initial goals */
 
@@ -25,7 +26,7 @@ state(5).
 +say(Msg) <-
 	.println("Owner esta aburrido y desde la consola le dice ", Msg, " al Robot");
 	.send(myRobot,tell,msg(Msg)).
-
+	
 // Según el estado del Owner comenta diferentes cosas cuando esta aburrido
 +!bored: state(5) <-
 	.println("Owner esta animado y le da conversación al robot");
@@ -52,7 +53,7 @@ state(5).
 	.send(myRobot,tell,msg("zzZZ"));
 	.wait(5000);
 	!bored.
-	
+
 +!bored <- !bored.
 
 +!drink(beer) : ~couldDrink(beer) <-
@@ -66,7 +67,7 @@ state(5).
 		-+state(X+3);
 		.println("el Owner ha bebido cerveza y aumenta mucho su estado de animo");
 	} elif(X<= 4){
-	
+
 		-+state(X+1);
 		.println("el Owner ha bebido cerveza y aumenta un poco su estado de animo");
 	}
@@ -87,11 +88,11 @@ state(5).
 	!drink(beer).
 	                                                                                                         
 +!get(beer) : not asked(beer) <-
-	.send(myRobot, achieve, bring(myOwner,beer));
+	.send(myRobot, achieve, bring(myOwner,beer)); //modificar adecuadamente
 	//.send(myRobot, tell, msg("Necesito urgentemente una cerveza"));
 	.println("Owner ha pedido una cerveza al robot.");
-	+asked(beer).  
-		
+	+asked(beer). 
+	
 +!mood: true <-
 	.random(R);
 	.wait(R * 800 + 3000);
@@ -102,6 +103,7 @@ state(5).
 	}
 	!mood.
 
+//Esta regla debe modificarse adecuadamente
 +msg(M)[source(Ag)] <- 
 	.print("Message from ",Ag,": ",M);
 	+~couldDrink(beer);
@@ -112,3 +114,7 @@ state(5).
 	show(Request).
 	
 -answer(What) <- .println("He recibido desde el robot: ", What).
+
++!darDinero(X) : dinero(D) <-
+	-+dinero(D-X);
+	.send(myRobot, achieve, recibirDinero(X)).

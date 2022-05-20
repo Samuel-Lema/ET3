@@ -2,23 +2,23 @@
 <aiml version="2.0">
 
 <category>
-    <pattern>Hola, ¿que haces?</pattern>
+    <pattern>^ que haces</pattern>
     <template>Limpiar el local y traerte cerveza, amo.</template>
 </category>
 
 
 <category>
-    <pattern>Hola, que andas haciendo!</pattern>
+    <pattern>^ que andas haciendo</pattern>
     <template>Tareas del hogar, amo.</template>
 </category>
 
 <category>
-    <pattern>Que demonios haces!</pattern>
+    <pattern>^ que demonios haces</pattern>
     <template>Traerte cerveza, amo.</template>
 </category>
 
 <category>
-    <pattern>¿Que vas a zzZZ hacer hoy?</pattern>
+    <pattern>^ hacer hoy</pattern>
     <template>Esperar a que te duermas y acuchillarte. Digo.. bip bop</template>
 </category>
 

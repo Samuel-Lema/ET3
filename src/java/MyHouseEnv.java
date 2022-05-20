@@ -171,7 +171,7 @@ public class MyHouseEnv extends Environment {
 		// move_towards(Who, Where) move an agent named Who to Where
         } else if (action.getFunctor().equals("move_towards")) {
             // Where is moving
-			String l = action.getTerm(1).toString();       	
+			String l = action.getTerm(0).toString();       	
             
 			Location dest = null;
             if (l.equals("fridge")) {
