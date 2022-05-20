@@ -1,0 +1,18 @@
+0,HOLA *,*,*,Hola#Comma ¿qué tal?,primero.aiml
+0,^ QUE TAL TU,*,*,Estoy genial!!!,primero.aiml
+0,^ ME LLAMO *,*,*,Vale <set name="nombre"><star index="2"/></set>.#Newline		<get name="nombre"/> es un bonito nombre.,primero.aiml
+0,HOLA,*,*,Hola de nuevo#Comma ¿qué tal?,primero.aiml
+0,CUAL ES TU EDAD,*,*,Tengo <bot name="age"/> años,primero.aiml
+0,* TU NOMBRE ^,*,*,Me llamo <bot name="name"/>,primero.aiml
+0,CUAL ES MI NOMBRE,*,*,<condition name="nombre">#Newline			<li value="unknown"> Aun no me has dicho tu nombre </li>#Newline			<li>Tu nombre es <get name="nombre"/></li>#Newline		</condition>,primero.aiml
+0,MI COLOR FAVORITO ES EL *,*,*,<think>#Newline			<set var="color"><star/></set>#Newline		</think>#Newline		El <get var="color"/> es un color distinguido.,primero.aiml
+0,* MI NOMBRE,*,*,<srai>CUAL ES MI NOMBRE</srai>,primero.aiml
+0,^ COMO ME LLAMO,*,*,<srai>CUAL ES MI NOMBRE</srai>,primero.aiml
+0,EL <SET>COLOR</SET> ES UN COLOR ^,*,*,A mi el color <star/> me parece muy bonito.,primero.aiml
+0,EL * ES UN COLOR ^,*,*,No sabía que <star/> fuera un color <star index="2"/>.,primero.aiml
+0,CUAL ES LA CAPITAL DE <SET>PAIS</SET>,*,*,La capital de <star/> es <map name="capital"><star/></map>.,primero.aiml
+0,CUAL ES LA CAPITAL DE *,*,*,No lo se,primero.aiml
+0,^ CAFE ^,*,*,te gusta el cafe,primero.aiml
+0,SI,TE GUSTA EL CAFE,*,Y como lo prefieres#Comma ¿solo o con leche?,primero.aiml
+0,NO,TE GUSTA EL CAFE,*,Entonces#Comma ¿eres de infusiones?,primero.aiml
+0,LA CAPITAL DE * ES *,*,*,<think>#Newline			<set var="cap"><srai>CUAL ES LA CAPITAL DE <star/></srai></set>#Newline		</think>#Newline		<condition var="cap">#Newline			<li value="No lo se">#Newline				<learn>#Newline					<category>                           #Newline						<pattern>#Newline							Cual es la capital de <eval><star/></eval>#Newline						</pattern>#Newline						<template>#Newline							La capital de <eval><star/></eval> es <eval><star index="2"/></eval>.#Newline						</template>#Newline					</category>#Newline				</learn>#Newline				No sabía que <star index="2"/> era la capital de <star/>#Comma pero a partir de ahora lo recordaré.#Newline			</li>#Newline			<li> #Newline				Ya sabía que <get var="cap"/>#Newline			</li>#Newline		</condition>,primero.aiml

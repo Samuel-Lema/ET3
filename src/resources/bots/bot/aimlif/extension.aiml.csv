@@ -1,0 +1,9 @@
+0,DONDESI,*,*,Puedes ver el siguiente video: #Newline<video> http://http://ssia.esei.uvigo.es:8080/media/Teaching/IntroduccionSI.m4v </video>,extension.aiml
+0,* PRESENTACION ^ SISTEMAS INTELIGENTES,*,*,<srai>DONDESI</srai>,extension.aiml
+0,* WEB * ESEI,*,*,La web de la ESEI se encuentra en <src> http://esei.uvigo.es </src>,extension.aiml
+0,EMAIL,*,*,<bot name="email"/>,extension.aiml
+0,^ TU EMAIL ^,*,*,<srai>EMAIL</srai>,extension.aiml
+0,^ CORREO ELECTRÓNICO ^,*,*,<srai>EMAIL</srai>,extension.aiml
+0,TRADUCE AL * LA FRASE *,*,*,Respondo: <translate> <to><map name="idioma"><star/></map></to> <msg><star index="2"/></msg> </translate>,extension.aiml
+0,* CONTESTASTE HACE * ^,*,*,<response> <index><star index="2"/></index></response>,extension.aiml
+0,CREA COMO PROPIEDAD NUEVA * CON VALOR *,*,*,Añade <botprop> <name><star/></name> <val><star index="2"/></val> </botprop>,extension.aiml

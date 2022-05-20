@@ -1,0 +1,15 @@
+/* Initial beliefs and rules */
+
+/* Initial goals */
+
+!empty_trashcan.
+
+/* Plans */
+
++!emptyTrashcan: trashcan(full)[source(myRobot)] <- 
+    empty_trashcan(trash);
+    .trashcan(full)[source(myRobot)]
+    !emptyTrashcan.
+
+
++!emptyTrashcan <- !emptyTrashcan.
