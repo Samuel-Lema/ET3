@@ -2,10 +2,6 @@
 
 // initially, I believe that there is some beer in the fridge
 available(beer,fridge).
-mySupermarkets(super1).
-mySupermarkets(super2).
-mySupermarkets(super3).
-dinero(1500).
 
 // my owner should not consume more than 10 beers a day :-)
 limit(beer,5).
@@ -62,8 +58,6 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 
 !answerOwner.
 
-!cleanHouse.
-
 !bringBeer.
 
 /* Plans */
@@ -75,22 +69,20 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 
 +!answerOwner : msg(Msg)[source(Ag)] & bot(Bot) <-
 	chatSincrono(Msg,Answer);
-	//chat(Msg) 
-	//bot.ownerResponses(Msg,Answer);
+	//chat(Msg) // De manera asÃ­ncrona devuelve una signal => answer(Answer)
 	-msg(Msg)[source(Ag)];   
 	.println("El agente ",Ag," ha dicho ",Msg);
 	!doSomething(Answer,Ag);
-	.send(Ag,tell,answer(Answer));
+	//.send(Ag,tell,answer(Answer)); //modificar adecuadamente
 	!answerOwner.
-	
 +!answerOwner <- !answerOwner.
 
 +!doSomething(Answer,Ag) : service(Answer, Service) <-
-	.println("Aqui debe ir el código del servicio:", Service," para el agente ",Ag).
-
+	.println("Aqui debe ir el cÃ³digo del servicio:", Service," para el agente ",Ag).
+	
 +!doSomething(Answer,Ag) : not service(Answer, Service) <-
 	.println("Le contesto al ",Ag," ",Answer);
-	.send(Ag,tell,answer(Answer)).
+	.send(Ag,tell,answer(Answer)). //modificar adecuadamente
 
 +!bring(myOwner, beer) [source(myOwner)] <-
 	+asked(beer).
@@ -98,7 +90,6 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 +!bringBeer : healthMsg(_) <- 
 	!go_at(myRobot,base);
 	.println("El Robot descansa porque Owner ha bebido mucho hoy.").
-	
 +!bringBeer : asked(beer) & not healthMsg(_) <- 
 	.println("Owner me ha pedido una cerveza.");
 	!go_at(myRobot,fridge);
@@ -131,50 +122,19 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 	.println("El robot cierra la nevera.").
 +!check(fridge, beer) : not ordered(beer) & not available(beer,fridge) <-
 	.println("El robot estÃ¡ en el frigorÃ­fico y hace un pedido de cerveza.");
-	.abolish(hayStock(_));
-	.send(super1,askOne,hayStock(A));	//ver cuáles supermarkets tienen stock antes de elegir
-	.send(super2,askOne,hayStock(B));
-	.send(super3,askOne,hayStock(C));
-	.wait(2000);
-	!elegirSuper;
+	!orderBeer(mySupermarket);
 	!check(fridge, beer).
 +!check(fridge, beer) <-
 	.println("El robot estÃ¡ esperando ................");
 	.wait(5000);
 	!check(fridge, beer).
-	
-+!elegirSuper : not ordered(beer) & .findall(p(P,S),hayStock(P)[source(S)],L)
-    //si el super tiene stock, P = precio, si no, P = "no" (los números tienen prioridad en la función .min)
- <- .min(L,p(Precio,Super));
-    if(Precio = no){
-	  !orderBeer(sinStock);
-	} else {
-	  .println("Decidido ", Super, " con precio de ", Precio);
-	  !orderBeer(Super);
-	}.
-+!elegirSuper.
 
-+!orderBeer(Supermarket) : not ordered(beer) & dinero(D) & hayStock(P)[source(Supermarket)] <-
-	if (Supermarket == sinStock) {
-		.println("Ningún super tiene stock. Esperando...");
-		.wait(5000);
-		.abolish(hayStock(_));
-		.send(super1,askOne,hayStock(A));	//ver cuáles tienen stock antes de elegir
-		.send(super2,askOne,hayStock(B));
-		.send(super3,askOne,hayStock(C));
-		!elegirSuper;
-	} else {
-		if (D < P) {
-			.println("No tengo dinero para comprar en ",Supermarket);
-			.wait(5000);
-		} else {
-			.println("El robot realiza un pedido a ",Supermarket);
-			!go_at(myRobot,delivery);
-			.println("El robot va a la ZONA de ENTREGA.");
-			.send(Supermarket, achieve, order(beer,3));
-			+ordered(beer);
-		}
-	}.
++!orderBeer(Supermarket) : not ordered(beer) <-
+	.println("El robot ha realizado un pedido al supermercado.");
+	!go_at(myRobot,delivery);
+	.println("El robot va a la ZONA de ENTREGA.");
+	.send(Supermarket, achieve, order(beer,3)); // Modificar adecuadamente
+	+ordered(beer).
 +!orderBeer(Supermarket).
 
 +!hasBeer(myOwner) : not too_much(beer) <-
@@ -195,11 +155,7 @@ filter(Answer, addingBot, [ToWrite,Route]):-
      !go_at(myRobot,P).
 
 // when the supermarket makes a delivery, try the 'has' goal again
-+delivered(beer,Qtd,OrderId)[source(X)] : mySupermarkets(X) & hayStock(P)[source(X)] & dinero(D) <- 
-	PTotal=P*Qtd;
-	.println("Ha llegado mi pedido de ",Qtd," cervezas, pagando ",PTotal," céntimos, me quedan ",D-PTotal);
-	.send(X, tell, pagar(PTotal));
-	-+dinero(D-PTotal);
++delivered(beer,_Qtd,_OrderId)[source(mySupermarket)] <- 
 	-ordered(beer);
 	+available(beer,fridge);
 	.wait(1000);
@@ -209,29 +165,8 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 // and thus the available belief is updated
 +stock(beer,0) :  available(beer,fridge) <-
 	-available(beer,fridge).
-+stock(beer,N) :  N > 1 & not available(beer,fridge) <-
++stock(beer,N) :  N > 0 & not available(beer,fridge) <-
 	-+available(beer,fridge).
-
-// Cuando la basura este llena el agente myRoomba lo vacia	
-+!cleanHouse : trashcan(full) <- 
-	.send(myRoomba, tell, trashcan(full));
-	.send(myRoomba, achieve, emptyTrashcan);
-	.send(myRoomba, untell, trashcan(full));
-	-trashcan(full);
-	!cleanHouse.
-	
-+!cleanHouse: canatfloor(can) <- 
-	!go_at(myRobot,can);
-	pickup(can);
-	.println("Se ha recogido una lata del suelo");
-	-canatfloor(can);
-	!go_at(myRobot,trashCan);
-	dropdown(can);
-	.println("Se ha tirado la lata a la basura");
-	
-	!cleanHouse.
-	
-+!cleanHouse <- !cleanHouse.
 
 +?time(T) : true
   <-  time.check(T).
