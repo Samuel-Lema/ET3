@@ -13,6 +13,12 @@ dinero(3000).
 
 !ask_time.
 
+!gottaGetBeer.
+
+!cleanHouse.
+
+!sit.
+
 !setupTool("Owner", "Robot").
 
 /* Plans */
@@ -29,29 +35,29 @@ dinero(3000).
 	.println("Owner esta aburrido y desde la consola le dice ", Msg, " al Robot");
 	.send(myRobot,tell,msg(Msg)).
 	
-// Según el estado del Owner comenta diferentes cosas cuando esta aburrido
+// Segï¿½n el estado del Owner comenta diferentes cosas cuando esta aburrido
 +!bored: state(5) <-
-	.println("Owner esta animado y le da conversación al robot");
+	.println("Owner esta animado y le da conversaciï¿½n al robot");
 	.send(myRobot, tell, msg("Me encuentro animado"));
-	.send(myRobot,tell,msg("Hola, ¿que haces?"));
+	.send(myRobot,tell,msg("Hola, ï¿½que haces?"));
 	.wait(5000);
 	!bored.
 +!bored: state(4) <-
-	.println("Owner esta eufórico, y le da conversación al robot");
-	.send(myRobot, tell, msg("Me encuentro eufórico"));
+	.println("Owner esta eufï¿½rico, y le da conversaciï¿½n al robot");
+	.send(myRobot, tell, msg("Me encuentro eufï¿½rico"));
 	.send(myRobot,tell,msg("Hola, que andas haciendo!"));
 	.wait(5000);
 	!bored.	
 +!bored: state(3) <-
-	.println("Owner esta crispado y le da conversación al robot");
+	.println("Owner esta crispado y le da conversaciï¿½n al robot");
 	.send(myRobot, tell, msg("Me encuentro crispado"));
 	.send(myRobot,tell,msg("Que demonios haces!"));
 	.wait(5000);
 	!bored.	
 +!bored: state(2) <-
-	.println("Owner esta amodorrado y le da conversación al robot");
+	.println("Owner esta amodorrado y le da conversaciï¿½n al robot");
 	.send(myRobot, tell, msg("Me encuentro amodorrado"));
-	.send(myRobot,tell,msg("¿Que vas a zzZZ hacer hoy?"));
+	.send(myRobot,tell,msg("ï¿½Que vas a zzZZ hacer hoy?"));
 	.wait(5000);
 	!bored.
 +!bored: state(1) <-
@@ -61,7 +67,7 @@ dinero(3000).
 	.wait(R * 5000 + 5000);
 	-+state(4);
 	//y recoge las latas
-	//también recoge las latas de vez en cuando (no solo al despertar)
+	//tambiï¿½n recoge las latas de vez en cuando (no solo al despertar)
 	!bored.
 	
 // Plan que se activa en un tiempo aleatorio
@@ -74,18 +80,46 @@ dinero(3000).
 
 +!bored <- !bored.
 
++!gottaGetBeer: at(myOwner,chair) <-
+	.wait(15000);
+	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
+	!go_at(myOwner,fridge);
+	!take(fridge,beer);
+	.send(myRobot, tell, "He cogido una cerveza del frigorifico");
+	!go_at(myOwner,chair);
+	hand_in(beer);
+	+has(myOwner,beer);
+	+asked(beer);
+	!gottaGetBeer.
+	
++!gottaGetBeer <- !gottaGetBeer.
+	
++!take(fridge, beer) <-
+	.println("El Owner estÃ¡ cogiendo una cerveza.");
+	!check(fridge, beer).
+	
++!check(fridge, beer) <-
+	.println("El Owner estÃ¡ en el frigorÃ­fico y coge una cerveza.");
+	.wait(1000);
+	open(fridge);
+	.println("El owner abre la nevera.");
+	get(beer);
+	.println("El owner coge una cerveza.");
+	close(fridge);
+	.println("El owner cierra la nevera.").
+
 +!drink(beer) : ~couldDrink(beer) <-
 	.println("Owner ha bebido demasiado por hoy.").	
 +!drink(beer) : not state(1) & has(myOwner,beer) & asked(beer) <-
 	.println("Owner va a empezar a beber cerveza.");
-	-asked(beer);
+	-asked(beer);  
 	sip(beer);
 	?state(X);
 	if(X<= 2){
 		-+state(X+1);
 		.println("el Owner ha bebido cerveza y aumenta un poco su estado de animo");
 	}
-	throw(beer);
+	troughtBeer;
 	.println("El owner ha tirado una lata");
 	!drink(beer).
 +!drink(beer) : not state(1) & has(myOwner,beer) & not asked(beer) <-
@@ -108,11 +142,16 @@ dinero(3000).
 	.println("Owner ha pedido una cerveza al robot.");
 	+asked(beer). 
 	
++!go_at(myOwner,P) : at(myOwner,P) <- true.
++!go_at(myOwner,P) : not at(myOwner,P)
+  <- move_towards(P);
+     !go_at(myOwner,P).
+	
 +!mood: true <-
 	.random(R);
 	.wait(R * 800 + 3000);
 	?state(X);
-	if(X \== 1){ //si no está ya dormido
+	if(X \== 1){ //si no estï¿½ ya dormido
 		if(X == 2){ //si va a pasar a dormido
 			.send(myRobot, tell, msg("Voy a dormir en X msec"));
 			.wait(5000);
@@ -122,6 +161,22 @@ dinero(3000).
 	}
 	!mood.
 
++!cleanHouse: inFloor(beer, N) & N > 0 <-
+	!go_at(myOwner,bottle);
+	getBeer;
+	.send(myRobot, tell, "Voy a tirar esta cerveza a la papelera");
+	!go_at(myOwner,basket);
+	putBeer;
+	.send(myRobot, tell, "He tirado una cerveza a la papelera");
+	!go_at(myOwner,chair);
+	!cleanHouse.
+
++!cleanHouse <- !cleanHouse.
+
++!sit <-
+	!go_at(myOwner,chair);.
+
+//Esta regla debe modificarse adecuadamente
 +msg(M)[source(Ag)] <- 
 	.print("Message from ",Ag,": ",M);
 	+~couldDrink(beer);

@@ -49,11 +49,11 @@ public class MyHouseModel extends GridWorldModel {
 
         // Base location of robot
         // setAgPos(0, lBase);
-		setAgPos(0, new Location(GSize/3+1,GSize/2-1));
+		setAgPos(1, new Location(GSize/3+1,GSize/2-1));
 		
 		// Chair location of owner
         // setAgPos(1, lChair);
-		setAgPos(1, new Location(GSize/2+1,GSize/3-1));
+		setAgPos(0, new Location(GSize/2+1,GSize/3-1));
 		
         // initial location of fridge and owner
         add(FRIDGE, lFridge);
@@ -110,22 +110,15 @@ public class MyHouseModel extends GridWorldModel {
         setAgPos(Index, r1); // move the robot in the grid                 
 		if (Index >0) { 
 			lRobot = r1;
-			System.out.println("Posición del robot =======>"+lRobot);
+			//System.out.println("Posición del robot =======>"+lRobot);
 		} else { 
 			lOwner = r1;
-			System.out.println("Posición del owner =======>"+lOwner);
+			//System.out.println("Posición del owner =======>"+lOwner);
 		}
 		
 		// repaint the locations
         if (view != null) {
-			view.update();
-            view.update(lFridge.x,lFridge.y);
-            view.update(lChair.x,lChair.y);
-            view.update(lDelivery.x,lDelivery.y);
-            view.update(lBase.x,lBase.y);        
-            view.update(lBasket.x,lBasket.y);
-			view.update(lOwner.x,lOwner.y);
-			view.update(lRobot.x,lRobot.y);		
+			view.update();	
 		} 
 		                    
 		return true;

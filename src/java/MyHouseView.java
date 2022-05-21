@@ -21,8 +21,8 @@ public class MyHouseView extends GridWorldView {
     /** draw application objects */
     @Override
     public void draw(Graphics g, int x, int y, int object) {
-        Location lRobot = hmodel.getAgPos(0);
-        Location lOwner = hmodel.getAgPos(1);
+        Location lRobot = hmodel.getAgPos(1);
+        Location lOwner = hmodel.getAgPos(0);
         //super.drawObstacle(g,x,y);
 		//super.drawAgent(g, x, y, Color.lightGray, -1);
         switch (object) {
