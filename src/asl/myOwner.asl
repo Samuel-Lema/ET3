@@ -35,29 +35,29 @@ dinero(3000).
 	.println("Owner esta aburrido y desde la consola le dice ", Msg, " al Robot");
 	.send(myRobot,tell,msg(Msg)).
 	
-// Seg�n el estado del Owner comenta diferentes cosas cuando esta aburrido
+// Según el estado del Owner comenta diferentes cosas cuando esta aburrido
 +!bored: state(5) <-
-	.println("Owner esta animado y le da conversaci�n al robot");
+	.println("Owner esta animado y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro animado"));
-	.send(myRobot,tell,msg("Hola, �que haces?"));
+	.send(myRobot, tell, msg("Hola, ¿qué haces?"));
 	.wait(5000);
 	!bored.
 +!bored: state(4) <-
-	.println("Owner esta euf�rico, y le da conversaci�n al robot");
-	.send(myRobot, tell, msg("Me encuentro euf�rico"));
-	.send(myRobot,tell,msg("Hola, que andas haciendo!"));
+	.println("Owner esta eufórico, y le da conversación al robot");
+	.send(myRobot, tell, msg("Me encuentro eufórico"));
+	.send(myRobot, tell, msg("Hola, que andas haciendo!"));
 	.wait(5000);
 	!bored.	
 +!bored: state(3) <-
-	.println("Owner esta crispado y le da conversaci�n al robot");
+	.println("Owner esta crispado y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro crispado"));
-	.send(myRobot,tell,msg("Que demonios haces!"));
+	.send(myRobot, tell, msg("Que demonios haces!"));
 	.wait(5000);
 	!bored.	
 +!bored: state(2) <-
-	.println("Owner esta amodorrado y le da conversaci�n al robot");
+	.println("Owner esta amodorrado y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro amodorrado"));
-	.send(myRobot,tell,msg("�Que vas a zzZZ hacer hoy?"));
+	.send(myRobot, tell, msg("¿Qué vas a zzZZ hacer hoy?"));
 	.wait(5000);
 	!bored.
 +!bored: state(1) <-
@@ -66,21 +66,23 @@ dinero(3000).
 	.random(R);	//se despierta en un tiempo aleatorio
 	.wait(R * 5000 + 5000);
 	-+state(4);
-	//y recoge las latas
-	//tambi�n recoge las latas de vez en cuando (no solo al despertar)
+	.send(myRobot,tell,msg("Me he despertado"));
+	!cleanHouse;
 	!bored.
 	
 // Plan que se activa en un tiempo aleatorio
-+!ask_time : true <-
++!ask_time : not state(1) & <-
    		.random(X); 
-		.wait(X * 6000);
+		.wait(X * 6000 + 6000);
 	    .println("El owner pregunta la hora");
 		.send(myRobot, tell, msg("Que hora es"));
 		!ask_time.
 
++!ask_time <- !ask_time.
+
 +!bored <- !bored.
 
-+!gottaGetBeer: at(myOwner,chair) <-
++!gottaGetBeer: not state(1) & at(myOwner,chair) <-
 	.wait(15000);
 	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
 	!go_at(myOwner,fridge);
@@ -137,8 +139,8 @@ dinero(3000).
 +!drink(beer) <- !drink(beer).
 	                                                                                                         
 +!get(beer) : not asked(beer) <-
-	.send(myRobot, achieve, bring(myOwner,beer)); //modificar adecuadamente
-	//.send(myRobot, tell, msg("Necesito urgentemente una cerveza"));
+	.send(myRobot, tell, msg("Tráeme una cerveza"));
+	.send(myRobot, achieve, bring(myOwner,beer));
 	.println("Owner ha pedido una cerveza al robot.");
 	+asked(beer). 
 	
@@ -151,9 +153,9 @@ dinero(3000).
 	.random(R);
 	.wait(R * 800 + 3000);
 	?state(X);
-	if(X \== 1){ //si no est� ya dormido
+	if(X \== 1){ //si no está ya dormido
 		if(X == 2){ //si va a pasar a dormido
-			.send(myRobot, tell, msg("Voy a dormir en X msec"));
+			.send(myRobot, tell, msg("Voy a dormir en 5000 msec"));
 			.wait(5000);
 		}
 		-+state(X-1);
@@ -161,7 +163,7 @@ dinero(3000).
 	}
 	!mood.
 
-+!cleanHouse: inFloor(beer, N) & N > 0 <-
++!cleanHouse: not state(1) & inFloor(beer, N) & N > 0 <-
 	!go_at(myOwner,bottle);
 	getBeer;
 	.send(myRobot, tell, "Voy a tirar esta cerveza a la papelera");
@@ -171,7 +173,10 @@ dinero(3000).
 	!go_at(myOwner,chair);
 	!cleanHouse.
 
-+!cleanHouse <- !cleanHouse.
++!cleanHouse <- 
+	.random(X); 
+	.wait(X * 6000 + 6000);
+	!cleanHouse.
 
 +!sit <-
 	!go_at(myOwner,chair);.
@@ -190,4 +195,5 @@ dinero(3000).
 
 +!darDinero(X) : not state(1) & dinero(D) <-
 	-+dinero(D-X);
+	.send(myRobot, tell, "Aquí tienes ", X, " céntimos para comprar cerveza");
 	.send(myRobot, achieve, recibirDinero(X)).
