@@ -71,7 +71,7 @@ dinero(3000).
 	!bored.
 	
 // Plan que se activa en un tiempo aleatorio
-+!ask_time : not state(1) & <-
++!ask_time : not state(1) <-
    		.random(X); 
 		.wait(X * 6000 + 6000);
 	    .println("El owner pregunta la hora");
