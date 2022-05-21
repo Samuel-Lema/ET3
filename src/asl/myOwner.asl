@@ -7,7 +7,7 @@ dinero(3000).
 
 !drink(beer). 
 
-!bored.
+!talkRobot.
 
 !mood.
 
@@ -36,31 +36,31 @@ dinero(3000).
 	.send(myRobot,tell,msg(Msg)).
 	
 // Según el estado del Owner comenta diferentes cosas cuando esta aburrido
-+!bored: state(5) <-
++!talkRobot: state(5) <-
 	.println("Owner esta animado y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro animado"));
 	.send(myRobot, tell, msg("Hola, ¿qué haces?"));
 	.wait(5000);
-	!bored.
-+!bored: state(4) <-
+	!talkRobot.
++!talkRobot: state(4) <-
 	.println("Owner esta eufórico, y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro eufórico"));
 	.send(myRobot, tell, msg("Hola, que andas haciendo!"));
 	.wait(5000);
-	!bored.	
-+!bored: state(3) <-
+	!talkRobot.	
++!talkRobot: state(3) <-
 	.println("Owner esta crispado y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro crispado"));
 	.send(myRobot, tell, msg("Que demonios haces!"));
 	.wait(5000);
-	!bored.	
-+!bored: state(2) <-
+	!talkRobot.	
++!talkRobot: state(2) <-
 	.println("Owner esta amodorrado y le da conversación al robot");
 	.send(myRobot, tell, msg("Me encuentro amodorrado"));
 	.send(myRobot, tell, msg("¿Qué vas a zzZZ hacer hoy?"));
 	.wait(5000);
-	!bored.
-+!bored: state(1) <-
+	!talkRobot.
++!talkRobot: state(1) <-
 	.println("Owner esta dormido y se escucha zzZZZ");
 	.send(myRobot,tell,msg("zzZZ"));
 	.random(R);	//se despierta en un tiempo aleatorio
@@ -68,7 +68,7 @@ dinero(3000).
 	-+state(4);
 	.send(myRobot,tell,msg("Me he despertado"));
 	!cleanHouse;
-	!bored.
+	!talkRobot.
 	
 // Plan que se activa en un tiempo aleatorio
 +!ask_time : not state(1) & <-
@@ -80,7 +80,7 @@ dinero(3000).
 
 +!ask_time <- !ask_time.
 
-+!bored <- !bored.
++!talkRobot <- !talkRobot.
 
 +!gottaGetBeer: not state(1) & at(myOwner,chair) <-
 	.wait(15000);
