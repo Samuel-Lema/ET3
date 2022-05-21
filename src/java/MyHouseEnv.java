@@ -16,7 +16,7 @@ public class MyHouseEnv extends Environment {
     public static final Literal gb  	= Literal.parseLiteral("get(beer)");        
     public static final Literal hb  	= Literal.parseLiteral("hand_in(beer)");     
     public static final Literal sb  	= Literal.parseLiteral("sip(beer)");        
-    public static final Literal hob 	= Literal.parseLiteral("has(owner,beer)");          
+    public static final Literal hob 	= Literal.parseLiteral("has(myRobot,beer)");          
     public static final Literal cb	 	= Literal.parseLiteral("getBeer");    
 	public static final Literal pb	 	= Literal.parseLiteral("putBeer"); 
 	public static final Literal tb	 	= Literal.parseLiteral("troughtBeer"); 
@@ -79,11 +79,11 @@ public class MyHouseEnv extends Environment {
 		
         // get the robot location
         Location lRobot = model.getAgPos(1);
-        System.out.println("Posición del robot:"+lRobot);
+        //System.out.println("Posición del robot:"+lRobot);
 		
         // get the owner location
         Location lOwner = model.getAgPos(0);
-        System.out.println("Posición del agente owner:"+lOwner);
+        //System.out.println("Posición del agente owner:"+lOwner);
 		
         // add agent location to its percepts
         if (model.lBottle != null && lOwner.isNeigbour(model.lBottle)) {
@@ -151,11 +151,11 @@ public class MyHouseEnv extends Environment {
 
 		// Inform actions required on the environment        
 		if (ag.equals("myRobot")) {
-			System.out.println("Robot interacciona con el entorno con: "+action);
+			//System.out.println("Robot interacciona con el entorno con: "+action);
 		} else if (ag.equals("myOwner")) {
-			System.out.println("Owner interacciona en el entorno pidiendo:"+action);
+			//System.out.println("Owner interacciona en el entorno pidiendo:"+action);
 		} else {
-			System.out.println("["+ag+"] doing: "+action);
+			//System.out.println("["+ag+"] doing: "+action);
         };
 		
 		boolean result = false;
@@ -237,7 +237,7 @@ public class MyHouseEnv extends Environment {
             result = model.emptyBasket();
 
 		// Robot informs that owner has a beer in his hand	
-        } else if (action.equals(hb) & ag.equals("myRobot")) {
+        } else if (action.equals(hb)) {
             result = model.handInBeer();
 
 		// Owner informs that owner is taking a sip 	

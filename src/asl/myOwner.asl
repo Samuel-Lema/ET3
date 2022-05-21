@@ -13,6 +13,10 @@ dinero(3000).
 
 !gottaGetBeer.
 
+!cleanHouse.
+
+!sit.
+
 !setupTool("Owner", "Robot").
 
 /* Plans */
@@ -58,16 +62,19 @@ dinero(3000).
 
 +!bored <- !bored.
 
-+!gottaGetBeer <-
-	.wait(10000);
++!gottaGetBeer: at(myOwner,chair) <-
+	.wait(15000);
 	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
 	!go_at(myOwner,fridge);
 	!take(fridge,beer);
+	.send(myRobot, tell, "He cogido una cerveza del frigorifico");
 	!go_at(myOwner,chair);
-	!hasBeer(myOwner);
-	.println("Ya he servido la cerveza y elimino la petición.");
-	.abolish(asked(Beer));
+	hand_in(beer);
+	+has(myOwner,beer);
+	+asked(beer);
 	!gottaGetBeer.
+	
++!gottaGetBeer <- !gottaGetBeer.
 	
 +!take(fridge, beer) <-
 	.println("El Owner está cogiendo una cerveza.");
@@ -82,17 +89,12 @@ dinero(3000).
 	.println("El owner coge una cerveza.");
 	close(fridge);
 	.println("El owner cierra la nevera.").
-	
-+!hasBeer(myOwner) <-
-	hand_in(beer);
-	?has(myOwner,beer);
-	.println("Se que Owner tiene la cerveza.").
 
 +!drink(beer) : ~couldDrink(beer) <-
 	.println("Owner ha bebido demasiado por hoy.").	
 +!drink(beer) : has(myOwner,beer) & asked(beer) <-
 	.println("Owner va a empezar a beber cerveza.");
-	-asked(beer);
+	-asked(beer);  
 	sip(beer);
 	?state(X);
 	if(X<= 2){
@@ -103,7 +105,7 @@ dinero(3000).
 		-+state(X+1);
 		.println("el Owner ha bebido cerveza y aumenta un poco su estado de animo");
 	}
-	throw(beer);
+	troughtBeer;
 	.println("El owner ha tirado una lata");
 	!drink(beer).
 +!drink(beer) : has(myOwner,beer) & not asked(beer) <-
@@ -139,6 +141,21 @@ dinero(3000).
 		.println("El owner esta perdiendo su estado de animo");
 	}
 	!mood.
+
++!cleanHouse: inFloor(beer, N) & N > 0 <-
+	!go_at(myOwner,bottle);
+	getBeer;
+	.send(myRobot, tell, "Voy a tirar esta cerveza a la papelera");
+	!go_at(myOwner,basket);
+	putBeer;
+	.send(myRobot, tell, "He tirado una cerveza a la papelera");
+	!go_at(myOwner,chair);
+	!cleanHouse.
+
++!cleanHouse <- !cleanHouse.
+
++!sit <-
+	!go_at(myOwner,chair);.
 
 //Esta regla debe modificarse adecuadamente
 +msg(M)[source(Ag)] <- 
