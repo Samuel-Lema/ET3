@@ -11,6 +11,8 @@ dinero(3000).
 
 !mood.
 
+!gottaGetBeer.
+
 !setupTool("Owner", "Robot").
 
 /* Plans */
@@ -56,6 +58,36 @@ dinero(3000).
 
 +!bored <- !bored.
 
++!gottaGetBeer <-
+	.wait(10000);
+	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
+	!go_at(myOwner,fridge);
+	!take(fridge,beer);
+	!go_at(myOwner,chair);
+	!hasBeer(myOwner);
+	.println("Ya he servido la cerveza y elimino la petición.");
+	.abolish(asked(Beer));
+	!gottaGetBeer.
+	
++!take(fridge, beer) <-
+	.println("El Owner está cogiendo una cerveza.");
+	!check(fridge, beer).
+	
++!check(fridge, beer) <-
+	.println("El Owner está en el frigorífico y coge una cerveza.");
+	.wait(1000);
+	open(fridge);
+	.println("El owner abre la nevera.");
+	get(beer);
+	.println("El owner coge una cerveza.");
+	close(fridge);
+	.println("El owner cierra la nevera.").
+	
++!hasBeer(myOwner) <-
+	hand_in(beer);
+	?has(myOwner,beer);
+	.println("Se que Owner tiene la cerveza.").
+
 +!drink(beer) : ~couldDrink(beer) <-
 	.println("Owner ha bebido demasiado por hoy.").	
 +!drink(beer) : has(myOwner,beer) & asked(beer) <-
@@ -92,6 +124,11 @@ dinero(3000).
 	//.send(myRobot, tell, msg("Necesito urgentemente una cerveza"));
 	.println("Owner ha pedido una cerveza al robot.");
 	+asked(beer). 
+	
++!go_at(myOwner,P) : at(myOwner,P) <- true.
++!go_at(myOwner,P) : not at(myOwner,P)
+  <- move_towards(P);
+     !go_at(myOwner,P).
 	
 +!mood: true <-
 	.random(R);

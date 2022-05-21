@@ -49,11 +49,11 @@ public class MyHouseModel extends GridWorldModel {
 
         // Base location of robot
         // setAgPos(0, lBase);
-		setAgPos(0, new Location(GSize/3+1,GSize/2-1));
+		setAgPos(1, new Location(GSize/3+1,GSize/2-1));
 		
 		// Chair location of owner
         // setAgPos(1, lChair);
-		setAgPos(1, new Location(GSize/2+1,GSize/3-1));
+		setAgPos(0, new Location(GSize/2+1,GSize/3-1));
 		
         // initial location of fridge and owner
         add(FRIDGE, lFridge);

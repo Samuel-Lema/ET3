@@ -23,19 +23,19 @@ public class MyHouseEnv extends Environment {
 	public static final Literal eb	 	= Literal.parseLiteral("emptyBasket"); 
 	
 	
-    public static final Literal arf  	= Literal.parseLiteral("at(robot,fridge)");
-    public static final Literal aro  	= Literal.parseLiteral("at(robot,owner)");
-    public static final Literal ard  	= Literal.parseLiteral("at(robot,delivery)");
-    public static final Literal arb  	= Literal.parseLiteral("at(robot,basket)");
-    public static final Literal arc  	= Literal.parseLiteral("at(robot,chair)");
-    public static final Literal arbo  	= Literal.parseLiteral("at(robot,bottle)");
-    public static final Literal abr  	= Literal.parseLiteral("at(robot,base)");
+    public static final Literal arf  	= Literal.parseLiteral("at(myRobot,fridge)");
+    public static final Literal aro  	= Literal.parseLiteral("at(myRobot,myOwner)");
+    public static final Literal ard  	= Literal.parseLiteral("at(myRobot,delivery)");
+    public static final Literal arb  	= Literal.parseLiteral("at(myRobot,basket)");
+    public static final Literal arc  	= Literal.parseLiteral("at(myRobot,chair)");
+    public static final Literal arbo  	= Literal.parseLiteral("at(myRobot,bottle)");
+    public static final Literal abr  	= Literal.parseLiteral("at(myRobot,base)");
 	
-    public static final Literal aof  	= Literal.parseLiteral("at(owner,fridge)");
-    public static final Literal aor  	= Literal.parseLiteral("at(owner,robot)");
-    public static final Literal aob  	= Literal.parseLiteral("at(owner,basket)");
-    public static final Literal aoc  	= Literal.parseLiteral("at(owner,chair)");
-    public static final Literal aobo  	= Literal.parseLiteral("at(owner,bottle)");
+    public static final Literal aof  	= Literal.parseLiteral("at(myOwner,fridge)");
+    public static final Literal aor  	= Literal.parseLiteral("at(myOwner,myRobot)");
+    public static final Literal aob  	= Literal.parseLiteral("at(myOwner,basket)");
+    public static final Literal aoc  	= Literal.parseLiteral("at(myOwner,chair)");
+    public static final Literal aobo  	= Literal.parseLiteral("at(myOwner,bottle)");
 	
     static Logger logger = Logger.getLogger(MyHouseEnv.class.getName());
 	
@@ -87,61 +87,61 @@ public class MyHouseEnv extends Environment {
 		
         // add agent location to its percepts
         if (model.lBottle != null && lOwner.isNeigbour(model.lBottle)) {
-			addPercept("owner", aobo);
+			addPercept("myOwner", aobo);
         }
 
         if (model.lBottle != null && lRobot.isNeigbour(model.lBottle)) {
-            addPercept("robot", arbo);
+            addPercept("myRobot", arbo);
         }
 
         if (lRobot.isNeigbour(model.lFridge)) {
-            addPercept("robot", arf);
+            addPercept("myRobot", arf);
         }
 		if (lRobot.isNeigbour(lOwner)) {
-            addPercept("robot", aro);  
-			addPercept("owner", aor);
+            addPercept("myRobot", aro);  
+			addPercept("myOwner", aor);
         }
 
         if (lOwner.isNeigbour(model.lFridge)) {
-            addPercept("owner", aof);                                             
+            addPercept("myOwner", aof);    
         }
 		
         if (lRobot.isNeigbour(model.lChair)) {
-            addPercept("robot", arc);
+            addPercept("myRobot", arc);
         }
         
         if (lOwner.equals(model.lChair)) {
-            addPercept("owner", aoc);
+            addPercept("myOwner", aoc);
         }
         
 		if (lRobot.equals(model.lDelivery)) {
-            addPercept("robot", ard);
+            addPercept("myRobot", ard);
         }
 
 		if (lRobot.isNeigbour(model.lBasket)) {
-            addPercept("robot", arb);
+            addPercept("myRobot", arb);
         }
 
 		if (lOwner.isNeigbour(model.lBasket)) {
-            addPercept("owner", aob);
+            addPercept("myOwner", aob);
         }
 
 		if (lRobot.equals(model.lBase)) {
-            addPercept("robot", abr);
+            addPercept("myRobot", abr);
         }
 
         // add beer stock when the fridge is open
         if (model.fridgeOpen) {
-            addPercept("robot", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));   
-			addPercept("owner", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));
+            addPercept("myRobot", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));   
+			addPercept("myOwner", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));
         }
 		
         // Sips done by owner
         if (model.sipCount > 0) {  
 			int tragos = model.SIPMAX - model.sipCount;  
-			addPercept("owner", Literal.parseLiteral("sipDone("+tragos+")"));
-            addPercept("robot", hob);  
-            addPercept("owner", hob);
+			addPercept("myOwner", Literal.parseLiteral("sipDone("+tragos+")"));
+            addPercept("myRobot", hob);  
+            addPercept("myOwner", hob);
         }
     }
 
@@ -150,9 +150,9 @@ public class MyHouseEnv extends Environment {
     public boolean executeAction(String ag, Structure action) {
 
 		// Inform actions required on the environment        
-		if (ag.equals("robot")) {
+		if (ag.equals("myRobot")) {
 			System.out.println("Robot interacciona con el entorno con: "+action);
-		} else if (ag.equals("owner")) {
+		} else if (ag.equals("myOwner")) {
 			System.out.println("Owner interacciona en el entorno pidiendo:"+action);
 		} else {
 			System.out.println("["+ag+"] doing: "+action);
@@ -176,13 +176,13 @@ public class MyHouseEnv extends Environment {
 			Location dest = null;
             if (l.equals("fridge")) {
                 dest = model.lFridge;
-            } else if (l.equals("robot")) {
+            } else if (l.equals("myRobot")) {
                 dest = model.lRobot;
             } else if (l.equals("chair")) {
                 dest = model.lChair;
             } else if (l.equals("basket")) {
                 dest = model.lBasket;
-            } else if (l.equals("owner")) {
+            } else if (l.equals("myOwner")) {
                 dest = model.lOwner;
             } else if (l.equals("delivery")) {
                 dest = model.lDelivery;
@@ -193,9 +193,9 @@ public class MyHouseEnv extends Environment {
             }
 
             try {
-                if (ag.equals("robot")) {
+                if (ag.equals("myRobot")) {
 					// Name of device that is moving
-					model.device = action.getTerm(0).toString();
+					//model.device = action.getTerm(0).toString();
 					//It requires that robot was declared after owner on .mas2j
 					result = model.moveTowards(1, dest); 
 				} else { 
@@ -208,7 +208,7 @@ public class MyHouseEnv extends Environment {
             }
                           
 		// Throw a beer to floor
-        } else if (action.equals(tb) & ag.equals("owner")) { 
+        } else if (action.equals(tb) & ag.equals("myOwner")) { 
             result = model.troughtBeer(); 
 			
 		// Get a beer from fridge	
@@ -237,11 +237,11 @@ public class MyHouseEnv extends Environment {
             result = model.emptyBasket();
 
 		// Robot informs that owner has a beer in his hand	
-        } else if (action.equals(hb) & ag.equals("robot")) {
+        } else if (action.equals(hb) & ag.equals("myRobot")) {
             result = model.handInBeer();
 
 		// Owner informs that owner is taking a sip 	
-        } else if (action.equals(sb) & ag.equals("owner")) {
+        } else if (action.equals(sb) & ag.equals("myOwner")) {
             System.out.println("El owner está bebiendo.");
 			result = model.sipBeer();
 
