@@ -147,10 +147,10 @@ dinero(3000).
 +!get(beer) : not asked(beer) <-
 	.random(R);
 	if(R > 0.5){ //la mitad de las veces va a por cerveza
-		//.println("El Owner decidió ir a coger cerveza");
+		//.println("El Owner decidiï¿½ ir a coger cerveza");
 		!gottaGetBeer;
 	}else{ //la otra mitad se la pide al robot
-		//.println("El Owner decidió pedirle la cerveza al robot");
+		//.println("El Owner decidiï¿½ pedirle la cerveza al robot");
 		.send(myRobot, tell, msg("Traeme una cerveza."));
 		.send(myRobot, tell, asked(beer));
 		.println("Owner ha pedido una cerveza al robot.");
@@ -214,11 +214,11 @@ dinero(3000).
 	if(D == 0){
 		.send(myRobot, tell, "No me queda dinero");
 	}else{
-		if(X <= D){ //si tiene más que la cantidad pedida, se envía la cantidad pedida
+		if(X <= D){ //si tiene mï¿½s que la cantidad pedida, se envï¿½a la cantidad pedida
 			-+dinero(D-X);
 			.send(myRobot, tell, "Aqui tienes ", X, " centimos para comprar cerveza");
 			.send(myRobot, tell, recibirDinero(X));
-		} else{ //si no, envía todo lo que le queda
+		} else{ //si no, envï¿½a todo lo que le queda
 			-+dinero(0);
 			.send(myRobot, tell, "Aqui tienes ", D, " centimos para comprar cerveza");
 			.send(myRobot, tell, recibirDinero(D));
