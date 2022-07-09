@@ -3,7 +3,7 @@
 // initially, I believe that there is some beer in the fridge
 available(beer,fridge).
 
-// my owner should not consume more than 10 beers a day :-)
+// my owner should not consume more than 10 beers a day
 limit(beer,5).
 
 too_much(B) :-
@@ -69,7 +69,7 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 
 +!answerOwner : msg(Msg)[source(Ag)] & bot(Bot) <-
 	chatSincrono(Msg,Answer);
-	//chat(Msg) // De manera asíncrona devuelve una signal => answer(Answer)
+	//chat(Msg) // De manera asincrona devuelve una signal => answer(Answer)
 	-msg(Msg)[source(Ag)];   
 	.println("El agente ",Ag," ha dicho ",Msg);
 	!doSomething(Answer,Ag);
@@ -78,41 +78,38 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 +!answerOwner <- !answerOwner.
 
 +!doSomething(Answer,Ag) : service(Answer, Service) <-
-	.println("Aqui debe ir el código del servicio:", Service," para el agente ",Ag).
+	.println("Aqui debe ir el codigo del servicio:", Service," para el agente ",Ag).
 	
 +!doSomething(Answer,Ag) : not service(Answer, Service) <-
 	.println("Le contesto al ",Ag," ",Answer);
 	.send(Ag,tell,answer(Answer)). //modificar adecuadamente
 
-+!bring(myOwner, beer) [source(myOwner)] <-
-	+asked(beer).
-	
 +!bringBeer : healthMsg(_) <- 
 	!go_at(myRobot,base);
 	.println("El Robot descansa porque Owner ha bebido mucho hoy.").
-+!bringBeer : asked(beer) & not healthMsg(_) <- 
++!bringBeer : asked(beer)[source(myOwner)] & not healthMsg(_) <- 
 	.println("Owner me ha pedido una cerveza.");
 	!go_at(myRobot,fridge);
 	!take(fridge,beer);
 	!go_at(myRobot,myOwner);
 	!hasBeer(myOwner);
-	.println("Ya he servido la cerveza y elimino la petición.");
+	.println("Ya he servido la cerveza y elimino la peticion.");
 	.abolish(asked(Beer));
 	!bringBeer.
-+!bringBeer : not asked(beer) & not healthMsg(_) <- 
++!bringBeer : not asked(beer)[source(myOwner)] & not healthMsg(_) <- 
 	.wait(2000);
-	.println("Robot esperando la petición de Owner.");
+	.println("Robot esperando la peticion de Owner.");
 	!bringBeer.
 
 +!take(fridge, beer) : not too_much(beer) <-
-	.println("El robot está cogiendo una cerveza.");
+	.println("El robot esta cogiendo una cerveza.");
 	!check(fridge, beer).
 +!take(fridge,beer) : too_much(beer) & limit(beer, L) <-
 	.concat("The Department of Health does not allow me to give you more than ", L," beers a day! I am very sorry about that!", M);
 	-+healthMsg(M).
 	
 +!check(fridge, beer) : not ordered(beer) & available(beer,fridge) <-
-	.println("El robot está en el frigorífico y coge una cerveza.");
+	.println("El robot esta en el frigorifico y coge una cerveza.");
 	.wait(1000);
 	open(fridge);
 	.println("El robot abre la nevera.");
@@ -121,11 +118,11 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 	close(fridge);
 	.println("El robot cierra la nevera.").
 +!check(fridge, beer) : not ordered(beer) & not available(beer,fridge) <-
-	.println("El robot está en el frigorífico y hace un pedido de cerveza.");
+	.println("El robot esta en el frigorifico y hace un pedido de cerveza.");
 	!orderBeer(mySupermarket);
 	!check(fridge, beer).
 +!check(fridge, beer) <-
-	.println("El robot está esperando ................");
+	.println("El robot esta esperando................");
 	.wait(5000);
 	!check(fridge, beer).
 
