@@ -16,7 +16,7 @@ public class MyHouseEnv extends Environment {
     public static final Literal gb  	= Literal.parseLiteral("get(beer)");        
     public static final Literal hb  	= Literal.parseLiteral("hand_in(beer)");     
     public static final Literal sb  	= Literal.parseLiteral("sip(beer)");        
-    public static final Literal hob 	= Literal.parseLiteral("has(myRobot,beer)");          
+    public static final Literal hob 	= Literal.parseLiteral("has(myOwner,beer)");          
     public static final Literal cb	 	= Literal.parseLiteral("getBeer");    
 	public static final Literal pb	 	= Literal.parseLiteral("putBeer"); 
 	public static final Literal tb	 	= Literal.parseLiteral("troughtBeer"); 
@@ -79,11 +79,11 @@ public class MyHouseEnv extends Environment {
 		
         // get the robot location
         Location lRobot = model.getAgPos(1);
-        //System.out.println("Posición del robot:"+lRobot);
+        //System.out.println("Posicion del robot:"+lRobot);
 		
         // get the owner location
         Location lOwner = model.getAgPos(0);
-        //System.out.println("Posición del agente owner:"+lOwner);
+        //System.out.println("Posicion del agente owner:"+lOwner);
 		
         // add agent location to its percepts
         if (model.lBottle != null && lOwner.isNeigbour(model.lBottle)) {
@@ -242,7 +242,7 @@ public class MyHouseEnv extends Environment {
 
 		// Owner informs that owner is taking a sip 	
         } else if (action.equals(sb) & ag.equals("myOwner")) {
-            System.out.println("El owner está bebiendo.");
+            System.out.println("El owner esta bebiendo.");
 			result = model.sipBeer();
 
 		// Super informs that has received a deliver from an auction 	

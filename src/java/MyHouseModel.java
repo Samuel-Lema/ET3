@@ -22,7 +22,7 @@ public class MyHouseModel extends GridWorldModel {
     boolean carryingEmptyBeer 	= false; 	// whether the robot is carrying an emptybeer
 
     int sipCount         		= 0;   		// how many sip the owner did  
-    int availableBeers   		= 3;     	// how many beers are available at fridge
+    int availableBeers   		= 6;     	// how many beers are available at fridge
     int deliveredBeers   		= 0;     	// how many beers has been delivered by super	
 	int lastAuction      		= 0;     	// last auction Id
 	int providedBeers    		= 0;     	// beers provided in last auction
@@ -106,15 +106,23 @@ public class MyHouseModel extends GridWorldModel {
         else if (r1.x > dest.x)   r1.x--;                                                
         if (r1.y < dest.y)        r1.y++;
         else if (r1.y > dest.y)   r1.y--;
-		
-        setAgPos(Index, r1); // move the robot in the grid                 
-		if (Index >0) { 
-			lRobot = r1;
-			//System.out.println("Posición del robot =======>"+lRobot);
-		} else { 
-			lOwner = r1;
-			//System.out.println("Posición del owner =======>"+lOwner);
+		              
+		if (Index >0) { //robot
+			if(r1.x == lOwner.x && r1.y == lOwner.y){
+				lOwner.y--;
+				setAgPos(0, lOwner);
+			}
+			lRobot.x = r1.x; lRobot.y = r1.y;
+			//System.out.println("Posicion del robot =======>"+lRobot);
+		} else { //owner
+			if(r1.x == lRobot.x && r1.y == lRobot.y){
+				lRobot.y--;
+				setAgPos(1, lRobot);
+			}
+			lOwner.x = r1.x; lOwner.y = r1.y;
+			//System.out.println("Posicion del owner =======>"+lOwner);
 		}
+        setAgPos(Index, r1); // move the robot in the grid   
 		
 		// repaint the locations
         if (view != null) {
@@ -218,8 +226,8 @@ public class MyHouseModel extends GridWorldModel {
     }
 
     boolean sipBeer() {
-		System.out.println("El número de tragos que le quedan a owner son "+sipCount);
-		System.out.println("El número máximo de tragos es de "+SIPMAX);
+		System.out.println("El numero de tragos que le quedan a owner son "+sipCount);
+		//System.out.println("El numero maximo de tragos es de "+SIPMAX);
         if (sipCount > 0) {
             sipCount--;
             if (view != null)
