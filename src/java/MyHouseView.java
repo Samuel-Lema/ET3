@@ -23,6 +23,7 @@ public class MyHouseView extends GridWorldView {
     public void draw(Graphics g, int x, int y, int object) {
         Location lRobot = hmodel.getAgPos(1);
         Location lOwner = hmodel.getAgPos(0);
+		Location lOwner2 = hmodel.getAgPos(2);
         //super.drawObstacle(g,x,y);
 		//super.drawAgent(g, x, y, Color.lightGray, -1);
         switch (object) {
@@ -94,7 +95,7 @@ public class MyHouseView extends GridWorldView {
 			super.drawAgent(g, x, y, c, -1);
 			g.setColor(Color.black);
 			super.drawString(g, x, y, defaultFont, hmodel.device);
-		} else { 
+		} else if(id == 0) { 
 			c = Color.blue; 
 			if (hmodel.carryingBeer) c = Color.cyan;
 			if (hmodel.carryingEmptyBeer) c = Color.lightGray;
@@ -106,6 +107,12 @@ public class MyHouseView extends GridWorldView {
 				o +=  " ("+tragos+")";
 			}               
 			super.drawString(g, x, y, defaultFont, o);
-		}                  	
+		}  else {
+			c = Color.red; 
+			super.drawAgent(g, x, y, c, -1);
+			g.setColor(Color.black);
+			String o = "owner2";        
+			super.drawString(g, x, y, defaultFont, o);
+		}
     }
 }                                                                                 

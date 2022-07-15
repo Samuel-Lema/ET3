@@ -23,9 +23,7 @@ dinero(3000).
 
 /* Plans */
 
-// if I have not beer finish, in other case while I have beer, sip
-
-+!setupTool(Name, Id)
++!setupTool(Name, Id) : .my_name(N) 
 	<- 	makeArtifact("GUI","gui.Console",[],GUI);
 		setBotMasterName(Name);
 		setBotName(Id);
@@ -38,25 +36,21 @@ dinero(3000).
 // Segun el estado del Owner comenta diferentes cosas cuando esta aburrido
 +!talkRobot: state(5) <-
 	.println("Owner esta animado y le da conversacion al robot");
-	.send(myRobot, tell, msg("Me encuentro animado"));
 	.send(myRobot, tell, msg("Hola, que haces?"));
 	.wait(5000);
 	!talkRobot.
 +!talkRobot: state(4) <-
 	.println("Owner esta euforico, y le da conversacion al robot");
-	.send(myRobot, tell, msg("Me encuentro euforico"));
 	.send(myRobot, tell, msg("Hola, que andas haciendo!"));
 	.wait(5000);
 	!talkRobot.	
 +!talkRobot: state(3) <-
 	.println("Owner esta crispado y le da conversacion al robot");
-	.send(myRobot, tell, msg("Me encuentro crispado"));
 	.send(myRobot, tell, msg("Que demonios haces!"));
 	.wait(5000);
 	!talkRobot.
 +!talkRobot: state(2) <-
 	.println("Owner esta amodorrado y le da conversacion al robot");
-	.send(myRobot, tell, msg("Me encuentro amodorrado"));
 	.send(myRobot, tell, msg("Que vas a zzZZ hacer hoy?"));
 	.wait(5000);
 	!talkRobot.
@@ -85,14 +79,14 @@ dinero(3000).
 
 +!ask_time <- !ask_time.
 
-+!gottaGetBeer <-
++!gottaGetBeer: .my_name(N) <-
 	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
-	!go_at(myOwner,fridge);
+	!go_at(N,fridge);
 	!take(fridge,beer);
 	.send(myRobot, tell, "He cogido una cerveza del frigorifico");
-	!go_at(myOwner,chair);
+	!go_at(N,chair);
 	hand_in(beer);
-	+has(myOwner,beer).
+	+has(N,beer).
 	
 +!take(fridge, beer) <-
 	.println("El Owner esta cogiendo una cerveza.");
@@ -112,34 +106,36 @@ dinero(3000).
 
 +!drink(beer) : ~couldDrink(beer) <-
 	.println("Owner ha bebido demasiado por hoy.").	
-+!drink(beer) : state(S) & S > 1 & has(myOwner,beer) & asked(beer) <-
++!drink(beer) : state(S) & S > 1 & .my_name(N) & has(N,beer) & asked(beer) <-
 	.println("Owner va a empezar a beber cerveza.");
 	-asked(beer);  
-	sip(beer);
+	!sip(beer);
 	-+state(S+1);
 	.println("El Owner ha bebido cerveza y aumenta su estado de animo.");
 	!drink(beer).
-+!drink(beer) : not state(1) & has(myOwner,beer) & not asked(beer) <-
++!drink(beer) : not state(1) & .my_name(N) & has(N,beer) & not asked(beer) <-
 	.wait(200);
-	sip(beer);
+	!sip(beer);
 	.println("Owner esta bebiendo cerveza.");
 	!drink(beer).
-+!drink(beer) : not state(1) & not has(myOwner,beer) & not asked(beer) & emptyCan <-
++!drink(beer) : not state(1) & .my_name(N) & not has(N,beer) & not asked(beer) & emptyCan <-
 	troughtBeer;
 	-emptyCan;
 	.println("El owner ha tirado una lata.");
 	!drink(beer).
-+!drink(beer) : not state(1) & not has(myOwner,beer) & not asked(beer) & not emptyCan <-
++!drink(beer) : not state(1) & .my_name(N) & not has(N,beer) & not asked(beer) & not emptyCan <-
 	.println("Owner no tiene cerveza.");
 	!get(beer);
 	!drink(beer).
-+!drink(beer) : not state(1) & not has(myOwner,beer) & asked(beer) <- 
++!drink(beer) : not state(1) & .my_name(N) & not has(N,beer) & asked(beer) <- 
 	.println("Owner esta esperando una cerveza.");
 	.wait(5000);                                                                          
 	!drink(beer).
 +!drink(beer) <- !drink(beer).
+
++!sip(beer) <- sip(beer).
 	      
--has(myOwner,beer) <-
+-has(N,beer): .my_name(N) <-
 	+emptyCan.
 
 +!get(beer) : not asked(beer) & state(S) & S < 5 & S \== 1 <-
@@ -157,12 +153,12 @@ dinero(3000).
 	
 +!get(beer) <- !get(beer).
 	
-+!go_at(myOwner,P) : at(myOwner,P) <- true.
-+!go_at(myOwner,P) : not at(myOwner,P)
++!go_at(A,P) : at(A,P) <- true.
++!go_at(A,P) : not at(A,P)
   <- move_towards(P);
-     !go_at(myOwner,P).
+     !go_at(A,P).
 	
-+!mood: at(myOwner,chair) <-
++!mood: .my_name(N) & at(N,chair) <-
 	.random(R);
 	.wait(R * 2000 + 4000);
 	?state(X);
@@ -178,14 +174,14 @@ dinero(3000).
 
 +!mood <- !mood.
 
-+!cleanHouse: not state(1) & inFloor(beer, N) & N > 0 & at(myOwner,chair) & not has(myOwner,beer)<-
++!cleanHouse: not state(1) & inFloor(beer, N) & N > 0 & .my_name(N) & at(N,chair) & not has(N,beer)<-
 	.send(myRobot, tell, "Voy a tirar esta cerveza a la papelera.");
-	!go_at(myOwner,bottle);
+	!go_at(N,bottle);
 	getBeer;
-	!go_at(myOwner,basket);
+	!go_at(N,basket);
 	putBeer;
 	.send(myRobot, tell, "He tirado una cerveza a la papelera.");
-	!go_at(myOwner,chair);
+	!go_at(N,chair);
 	!cleanHouse.
 
 +!cleanHouse <- 
@@ -193,8 +189,8 @@ dinero(3000).
 	.wait(X * 5000 + 10000);
 	!cleanHouse.
 
-+!sit <-
-	!go_at(myOwner,chair).
++!sit: .my_name(N) <-
+	!go_at(N,chair).
 
 +msg(M)[source(Ag)] <- 
 	.print("Message from ",Ag,": ",M);

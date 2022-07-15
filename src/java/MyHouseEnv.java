@@ -85,6 +85,8 @@ public class MyHouseEnv extends Environment {
         Location lOwner = model.getAgPos(0);
         //System.out.println("Posicion del agente owner:"+lOwner);
 		
+		Location lOwner2 = model.getAgPos(2);
+		
         // add agent location to its percepts
         if (model.lBottle != null && lOwner.isNeigbour(model.lBottle)) {
 			addPercept("myOwner", aobo);
@@ -184,6 +186,8 @@ public class MyHouseEnv extends Environment {
                 dest = model.lBasket;
             } else if (l.equals("myOwner")) {
                 dest = model.lOwner;
+			} else if (l.equals("myOwner2")) {
+                dest = model.lOwner2;
             } else if (l.equals("delivery")) {
                 dest = model.lDelivery;
             } else if (l.equals("bottle")) {
@@ -198,10 +202,14 @@ public class MyHouseEnv extends Environment {
 					//model.device = action.getTerm(0).toString();
 					//It requires that robot was declared after owner on .mas2j
 					result = model.moveTowards(1, dest); 
-				} else { 
-					//0 is the first agent declared on .mas2j
+				} else if (ag.equals("myOwner")) {
+					
 					result = model.moveTowards(0, dest); 
-				};
+				} else {
+					
+					result = model.moveTowards(2, dest);
+				}
+				
 				Thread.sleep(300);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -7,7 +7,10 @@
 MAS domestic_robot {
     environment: MyHouseEnv 
 	// use "nogui" as parameter to not show the GUI
-    agents: myOwner
+    agents: myOwner myOwner.asl
+				agentArchClass MixedAgentArch
+				agentArchClass jaca.CAgentArch;
+			myOwner2 myOwner.asl
 				agentArchClass MixedAgentArch
 				agentArchClass jaca.CAgentArch;
 			myRobot
