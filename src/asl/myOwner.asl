@@ -78,14 +78,14 @@ dinero(3000).
 // Plan que se activa en un tiempo aleatorio
 +!ask_time : not state(1) <-
    		.random(X); 
-		.wait(X * 6000 + 6000);
+		.wait(X * 4000 + 8000);
 	    .println("El owner pregunta la hora");
 		.send(myRobot, tell, msg("Que hora es"));
 		!ask_time.
 
 +!ask_time <- !ask_time.
 
-+!gottaGetBeer: not state(1) & at(myOwner,chair) <-
++!gottaGetBeer <-
 	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
 	!go_at(myOwner,fridge);
 	!take(fridge,beer);
@@ -116,22 +116,20 @@ dinero(3000).
 	.println("Owner va a empezar a beber cerveza.");
 	-asked(beer);  
 	sip(beer);
-	if(S < 5){
-		-+state(S+1);
-		.println("El Owner ha bebido cerveza y aumenta su estado de animo.");
-	}
+	-+state(S+1);
+	.println("El Owner ha bebido cerveza y aumenta su estado de animo.");
 	!drink(beer).
 +!drink(beer) : not state(1) & has(myOwner,beer) & not asked(beer) <-
 	.wait(200);
 	sip(beer);
 	.println("Owner esta bebiendo cerveza.");
 	!drink(beer).
-+!drink(beer) : not state(1) & not has(myOwner,beer) & not asked(beer) & at(myOwner,chair) & emptyCan <-
++!drink(beer) : not state(1) & not has(myOwner,beer) & not asked(beer) & emptyCan <-
 	troughtBeer;
 	-emptyCan;
 	.println("El owner ha tirado una lata.");
 	!drink(beer).
-+!drink(beer) : not state(1) & not has(myOwner,beer) & not asked(beer) & at(myOwner,chair) & not emptyCan <-
++!drink(beer) : not state(1) & not has(myOwner,beer) & not asked(beer) & not emptyCan <-
 	.println("Owner no tiene cerveza.");
 	!get(beer);
 	!drink(beer).
@@ -144,18 +142,20 @@ dinero(3000).
 -has(myOwner,beer) <-
 	+emptyCan.
 
-+!get(beer) : not asked(beer) <-
++!get(beer) : not asked(beer) & state(S) & S < 5 & S \== 1 <-
 	.random(R);
 	if(R > 0.5){ //la mitad de las veces va a por cerveza
-		//.println("El Owner decidiï¿½ ir a coger cerveza");
+		//.println("El Owner decidió ir a coger cerveza");
 		!gottaGetBeer;
 	}else{ //la otra mitad se la pide al robot
-		//.println("El Owner decidiï¿½ pedirle la cerveza al robot");
+		//.println("El Owner decidió pedirle la cerveza al robot");
 		.send(myRobot, tell, msg("Traeme una cerveza."));
 		.send(myRobot, tell, asked(beer));
 		.println("Owner ha pedido una cerveza al robot.");
 	}
 	+asked(beer). 
+	
++!get(beer) <- !get(beer).
 	
 +!go_at(myOwner,P) : at(myOwner,P) <- true.
 +!go_at(myOwner,P) : not at(myOwner,P)
@@ -164,7 +164,7 @@ dinero(3000).
 	
 +!mood: at(myOwner,chair) <-
 	.random(R);
-	.wait(R * 1000 + 3000);
+	.wait(R * 2000 + 4000);
 	?state(X);
 	if(X \== 1){ //si no esta ya dormido
 		if(X == 2){ //si va a pasar a dormido
@@ -175,6 +175,8 @@ dinero(3000).
 		.println("El owner esta perdiendo su estado de animo.");
 	}
 	!mood.
+
++!mood <- !mood.
 
 +!cleanHouse: not state(1) & inFloor(beer, N) & N > 0 & at(myOwner,chair) & not has(myOwner,beer)<-
 	.send(myRobot, tell, "Voy a tirar esta cerveza a la papelera.");
@@ -188,13 +190,12 @@ dinero(3000).
 
 +!cleanHouse <- 
 	.random(X); 
-	.wait(X * 4000 + 8000);
+	.wait(X * 5000 + 10000);
 	!cleanHouse.
 
 +!sit <-
 	!go_at(myOwner,chair).
 
-//Esta regla debe modificarse adecuadamente
 +msg(M)[source(Ag)] <- 
 	.print("Message from ",Ag,": ",M);
 	+~couldDrink(beer);
@@ -208,19 +209,19 @@ dinero(3000).
 
 +askedMoney(X) <-
 	.abolish(askedMoney(X));
-	!darDinero(X).
+	!giveMoney(X).
 
-+!darDinero(X) : not state(1) & dinero(D) <-
++!giveMoney(X) : not state(1) & dinero(D) <-
 	if(D == 0){
 		.send(myRobot, tell, "No me queda dinero");
 	}else{
-		if(X <= D){ //si tiene mï¿½s que la cantidad pedida, se envï¿½a la cantidad pedida
+		if(X <= D){ //si tiene más que la cantidad pedida, se envía la cantidad pedida
 			-+dinero(D-X);
 			.send(myRobot, tell, "Aqui tienes ", X, " centimos para comprar cerveza");
-			.send(myRobot, tell, recibirDinero(X));
-		} else{ //si no, envï¿½a todo lo que le queda
+			.send(myRobot, tell, receiveMoney(X));
+		} else{ //si no, envía todo lo que le queda
 			-+dinero(0);
 			.send(myRobot, tell, "Aqui tienes ", D, " centimos para comprar cerveza");
-			.send(myRobot, tell, recibirDinero(D));
+			.send(myRobot, tell, receiveMoney(D));
 		}
 	}.
