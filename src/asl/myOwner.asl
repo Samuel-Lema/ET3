@@ -44,6 +44,7 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 
 /* Initial goals */
 
+!setupTool("Owner", "Robot").
 !initBot.
 !answerOwner.
 !ask_time.
@@ -58,6 +59,12 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 !wakeUp.
 
 /* Plans */
+		
++!setupTool(Name, Id) : .my_name(N) 
+    <-     makeArtifact("GUI","gui.Console",[],GUI);
+        setBotMasterName(Name);
+        setBotName(Id);
+        focus(GUI).
 		
 +!initBot: .my_name(N) & N == "myOwner2" <-
 	makeArtifact(N,"bot.ChatBOT",["bot"],BOT);
