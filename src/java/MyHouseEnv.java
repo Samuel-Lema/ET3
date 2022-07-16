@@ -205,9 +205,6 @@ public class MyHouseEnv extends Environment {
 				} else if (ag.equals("myOwner")) {
 					
 					result = model.moveTowards(0, dest); 
-				} else {
-					
-					result = model.moveTowards(2, dest);
 				}
 				
 				Thread.sleep(300);

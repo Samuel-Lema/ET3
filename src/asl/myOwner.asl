@@ -7,13 +7,49 @@ state(5). 	// 5 Animado
 			// 1 Dormido
 dinero(3000).
 
+// Check if owner answer requires a service
+service(Answer, translating):- 			// Translating service
+	checkTag("<translate>",Answer).
+service(Answer, addingBot):- 			// Adding a bot property service
+	checkTag("<botprop>",Answer).
+
+	
+// Checking a concrete service required by the bot ia as simple as find the required tag
+// as a substring on the string given by the second parameter
+checkTag(Service,String) :-
+	.substring(Service,String).
+
+
+// Gets into Val the first substring contained by a tag Tag into String
+getValTag(Tag,String,Val) :- 
+	.substring(Tag,String,Fst) &       // First: find the Fst Posicition of the tag string              
+	.length(Tag,N) &                   // Second: calculate the length of the tag string
+	.delete(0,Tag,RestTag) &     
+	.concat("</",RestTag,EndTag) &     // Third: build the terminal of the tag string
+	.substring(EndTag,String,End) &    // Four: find the Fst Position of the terminal tag string
+	.substring(String,Val,Fst+N,End).  // Five: get the Val tagged
+
+// Filter the answer to be showed when the service indicated as second arg is done
+filter(Answer, translating, [To,Msg]):-
+	getValTag("<to>",Answer,To) &
+	getValTag("<msg>",Answer,Msg).
+	
+filter(Answer, addingBot, [ToWrite,Route]):-
+	getValTag("<name>",Answer,Name) &
+	getValTag("<val>",Answer,Val) &
+	.concat(Name,":",Val,ToWrite) &
+	bot(Bot) &
+	.concat("/bots/",Bot,BotName) &
+	.concat(BotName,"/config/properties.txt",Route).	
+
 /* Initial goals */
 
-!setupTool("Owner", "Robot").
+!initBot.
+!answerOwner.
 !ask_time.
 !mood.
 !sit.
-
+ 
 /* subobjectives for cheerUp */
 
 !talkRobot.
@@ -22,12 +58,20 @@ dinero(3000).
 !wakeUp.
 
 /* Plans */
+		
++!initBot: .my_name(N) & N == "myOwner2" <-
+	makeArtifact(N,"bot.ChatBOT",["bot"],BOT);
+	focus(BOT);
+	+bot("bot").
 
-+!setupTool(Name, Id) : .my_name(N) 
-	<- 	makeArtifact("GUI","gui.Console",[],GUI);
-		setBotMasterName(Name);
-		setBotName(Id);
-		focus(GUI). 
++!answerOwner : msg(Msg)[source(Ag)] & bot(Bot) <-
+	chatSincrono(Msg,Answer);
+	-msg(Msg)[source(Ag)];   
+	.println("El agente ",Ag," ha dicho ",Msg);
+	.println("OWNER2 --- Le contesto al ",Ag," ",Answer);
+	.send(Ag,tell,Answer).
+	!answerOwner.
++!answerOwner <- !answerOwner.
 		
 +say(Msg) <-
 	.println("Owner esta aburrido y desde la consola le dice ", Msg, " al Robot");
@@ -37,16 +81,19 @@ dinero(3000).
 +!talkRobot: state(5) <-
 	.println("Owner esta animado y le da conversacion al robot");
 	.send(myRobot, tell, msg("Hola, que haces?"));
+	.send(myOwner2, tell, msg("Hola, que haces?"));
 	.wait(5000);
 	!talkRobot.
 +!talkRobot: state(4) <-
 	.println("Owner esta euforico, y le da conversacion al robot");
 	.send(myRobot, tell, msg("Hola, que andas haciendo!"));
+	.send(myOwner2, tell, msg("Hola, que andas haciendo!"));
 	.wait(5000);
 	!talkRobot.	
 +!talkRobot: state(3) <-
 	.println("Owner esta crispado y le da conversacion al robot");
 	.send(myRobot, tell, msg("Que demonios haces!"));
+	.send(myOwner2, tell, msg("Que demonios haces!"));
 	.wait(5000);
 	!talkRobot.
 +!talkRobot: state(2) <-
@@ -109,13 +156,13 @@ dinero(3000).
 +!drink(beer) : state(S) & S > 1 & .my_name(N) & has(N,beer) & asked(beer) <-
 	.println("Owner va a empezar a beber cerveza.");
 	-asked(beer);  
-	!sip(beer);
+	sip(beer);
 	-+state(S+1);
 	.println("El Owner ha bebido cerveza y aumenta su estado de animo.");
 	!drink(beer).
 +!drink(beer) : not state(1) & .my_name(N) & has(N,beer) & not asked(beer) <-
 	.wait(200);
-	!sip(beer);
+	sip(beer);
 	.println("Owner esta bebiendo cerveza.");
 	!drink(beer).
 +!drink(beer) : not state(1) & .my_name(N) & not has(N,beer) & not asked(beer) & emptyCan <-
@@ -132,8 +179,6 @@ dinero(3000).
 	.wait(5000);                                                                          
 	!drink(beer).
 +!drink(beer) <- !drink(beer).
-
-+!sip(beer) <- sip(beer).
 	      
 -has(N,beer): .my_name(N) <-
 	+emptyCan.
@@ -174,14 +219,14 @@ dinero(3000).
 
 +!mood <- !mood.
 
-+!cleanHouse: not state(1) & inFloor(beer, N) & N > 0 & .my_name(N) & at(N,chair) & not has(N,beer)<-
++!cleanHouse: not state(1) & inFloor(beer, N) & N > 0 & .my_name(X) & at(X,chair) & not has(X,beer)<-
 	.send(myRobot, tell, "Voy a tirar esta cerveza a la papelera.");
-	!go_at(N,bottle);
+	!go_at(X,bottle);
 	getBeer;
-	!go_at(N,basket);
+	!go_at(X,basket);
 	putBeer;
 	.send(myRobot, tell, "He tirado una cerveza a la papelera.");
-	!go_at(N,chair);
+	!go_at(X,chair);
 	!cleanHouse.
 
 +!cleanHouse <- 
