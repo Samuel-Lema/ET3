@@ -73,7 +73,6 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 	-msg(Msg)[source(Ag)];   
 	.println("El agente ",Ag," ha dicho ",Msg);
 	!doSomething(Answer,Ag);
-	//.send(Ag,tell,answer(Answer)); //modificar adecuadamente
 	!answerOwner.
 +!answerOwner <- !answerOwner.
 
@@ -144,7 +143,7 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 	+consumed(YY,MM,DD,HH,NN,SS,beer).
 +!hasBeer(myOwner) : too_much(beer) & healthMsg(M) <- 
 	//.abolish(msg(_));
-	.send(myOwner,tell,msg(M)).
+	.send(myOwner,tell,healthMsg(M)).
 
 +!go_at(myRobot,P) : at(myRobot,P) <- true.
 +!go_at(myRobot,P) : not at(myRobot,P)

@@ -7,105 +7,91 @@ state(5). 	// 5 Animado
 			// 1 Dormido
 dinero(3000).
 
-// Check if owner answer requires a service
-service(Answer, translating):- 			// Translating service
-	checkTag("<translate>",Answer).
-service(Answer, addingBot):- 			// Adding a bot property service
-	checkTag("<botprop>",Answer).
-
-	
-// Checking a concrete service required by the bot ia as simple as find the required tag
-// as a substring on the string given by the second parameter
-checkTag(Service,String) :-
-	.substring(Service,String).
-
-
-// Gets into Val the first substring contained by a tag Tag into String
-getValTag(Tag,String,Val) :- 
-	.substring(Tag,String,Fst) &       // First: find the Fst Posicition of the tag string              
-	.length(Tag,N) &                   // Second: calculate the length of the tag string
-	.delete(0,Tag,RestTag) &     
-	.concat("</",RestTag,EndTag) &     // Third: build the terminal of the tag string
-	.substring(EndTag,String,End) &    // Four: find the Fst Position of the terminal tag string
-	.substring(String,Val,Fst+N,End).  // Five: get the Val tagged
-
-// Filter the answer to be showed when the service indicated as second arg is done
-filter(Answer, translating, [To,Msg]):-
-	getValTag("<to>",Answer,To) &
-	getValTag("<msg>",Answer,Msg).
-	
-filter(Answer, addingBot, [ToWrite,Route]):-
-	getValTag("<name>",Answer,Name) &
-	getValTag("<val>",Answer,Val) &
-	.concat(Name,":",Val,ToWrite) &
-	bot(Bot) &
-	.concat("/bots/",Bot,BotName) &
-	.concat(BotName,"/config/properties.txt",Route).	
-
 /* Initial goals */
 
-!setupTool("Owner", "Robot").
+!setupTool.
 !initBot.
-!answerOwner.
 !ask_time.
 !mood.
 !sit.
  
 /* subobjectives for cheerUp */
 
-!talkRobot.
+!talkRobotInicial.
 !cleanHouse.
 !drinkBeer. 
 !wakeUp.
 
 /* Plans */
-		
-+!setupTool(Name, Id) : .my_name(N) 
-    <-     makeArtifact("GUI","gui.Console",[],GUI);
-        setBotMasterName(Name);
-        setBotName(Id);
-        focus(GUI).
-		
-+!initBot: .my_name(N) & N == "myOwner2" <-
+
++!setupTool : gui(G) & .my_name(N) <-     
+	makeArtifact(G,"gui.Console",[],GUI);
+	setHeader(N);
+    focus(GUI).
+
++!initBot: botname(N) <-
 	makeArtifact(N,"bot.ChatBOT",["bot"],BOT);
 	focus(BOT);
 	+bot("bot").
-
-+!answerOwner : msg(Msg)[source(Ag)] & bot(Bot) <-
-	chatSincrono(Msg,Answer);
-	-msg(Msg)[source(Ag)];   
-	.println("El agente ",Ag," ha dicho ",Msg);
-	.println("OWNER2 --- Le contesto al ",Ag," ",Answer);
-	.send(Ag,tell,Answer).
-	!answerOwner.
-+!answerOwner <- !answerOwner.
-		
+	
 +say(Msg) <-
 	.println("Owner esta aburrido y desde la consola le dice ", Msg, " al Robot");
-	.send(myRobot,tell,msg(Msg)).
+	.send(myRobot,tell,msg(Msg));
+	-say(Msg).
+
++healthMsg(Msg)[source(Ag)] <- 
+	.print("Message from ",Ag,": ",Msg);
+	+~couldDrink(beer);
+	-healthMsg(Msg).
+	
++msg(Msg)[source(Ag)] <-
+	.println(Ag," ha dicho: ", Msg);
+	show(Msg, Ag);
+	chatSincrono(Msg,Answer);
+	show(Answer, "Yo");
+	.send(Ag,tell,answer(Answer));
+	-msg(Msg)[source(Ag)].
+
++answer(Msg)[source(Ag)] <-
+	.println(Ag," ha contestado: ", Msg);
+	show(Msg, Ag);
+	-answer(Msg)[source(Ag)].
+
++!talkRobotInicial <-
+	.wait(5000);
+	!talkRobot.
 	
 // Segun el estado del Owner comenta diferentes cosas cuando esta aburrido
 +!talkRobot: state(5) <-
-	.println("Owner esta animado y le da conversacion al robot");
+	.println("Owner esta animado y da conversacion");
+	show("Hola, que haces?","Yo");
 	.send(myRobot, tell, msg("Hola, que haces?"));
-	.send(myOwner2, tell, msg("Hola, que haces?"));
+	?compa(C);
+	.send(C, tell, msg("Hola, que haces?"));
 	.wait(5000);
 	!talkRobot.
 +!talkRobot: state(4) <-
-	.println("Owner esta euforico, y le da conversacion al robot");
+	.println("Owner esta euforico y da conversacion");
+	show("Hola, que andas haciendo!", "Yo");
 	.send(myRobot, tell, msg("Hola, que andas haciendo!"));
-	.send(myOwner2, tell, msg("Hola, que andas haciendo!"));
+	?compa(C);
+	.send(C, tell, msg("Hola, que andas haciendo!"));
 	.wait(5000);
 	!talkRobot.	
 +!talkRobot: state(3) <-
-	.println("Owner esta crispado y le da conversacion al robot");
+	.println("Owner esta crispado y da conversacion");
+	show("Que demonios haces!", "Yo");
 	.send(myRobot, tell, msg("Que demonios haces!"));
-	.send(myOwner2, tell, msg("Que demonios haces!"));
+	?compa(C);
+	.send(C, tell, msg("Que demonios haces!"));
 	.wait(5000);
 	!talkRobot.
 +!talkRobot: state(2) <-
-	.println("Owner esta amodorrado y le da conversacion al robot");
+	.println("Owner esta amodorrado y da conversacion");
+	show("Que vas a zzZZ hacer hoy?", "Yo");
 	.send(myRobot, tell, msg("Que vas a zzZZ hacer hoy?"));
+	?compa(C);
+	.send(C, tell, msg("Que vas a zzZZ hacer hoy?"));
 	.wait(5000);
 	!talkRobot.
 	
@@ -243,17 +229,6 @@ filter(Answer, addingBot, [ToWrite,Route]):-
 
 +!sit: .my_name(N) <-
 	!go_at(N,chair).
-
-+msg(M)[source(Ag)] <- 
-	.print("Message from ",Ag,": ",M);
-	+~couldDrink(beer);
-	-msg(M).
-
-+answer(Request) <-
-	.println("El Robot ha contestado: ", Request);
-	show(Request).
-	
--answer(What) <- .println("He recibido desde el robot: ", What).
 
 +askedMoney(X) <-
 	.abolish(askedMoney(X));

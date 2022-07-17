@@ -55,10 +55,6 @@ public class MyFrame extends JFrame {
 		textArea = new JTextPane();
 		textArea.setSize(400,200);
 		textArea.setMargin(new Insets(5, 5, 5, 5));
-		appendToPane(textArea, "/*  Information window for user interaction with the agent */", Color.BLUE);
-		String salto = System.lineSeparator();
-		appendToPane(textArea, salto, Color.BLUE);
-		appendToPane(textArea, salto, Color.BLUE);
 			
 		scroll = new JScrollPane(textArea);
 
