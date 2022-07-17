@@ -44,8 +44,7 @@ public class Console extends GUIArtifact {
 		
 		frame.getTextField().setText("");
 		
-		frame.appendToPane(frame.getTextArea(), botMasterName, Color.DARK_GRAY);
-		frame.appendToPane(frame.getTextArea(), " dice: ", Color.DARK_GRAY);
+		frame.appendToPane(frame.getTextArea(), "Yo: ", Color.DARK_GRAY);
 		frame.appendToPane(frame.getTextArea(), texto, Color.DARK_GRAY);
 		String salto = System.lineSeparator();
 		frame.appendToPane(frame.getTextArea(), salto, Color.DARK_GRAY);
@@ -69,10 +68,10 @@ public class Console extends GUIArtifact {
 		frame.appendToPane(frame.getTextArea(), salto, Color.DARK_GRAY);
 	}
 
-	@OPERATION void show(String texto){
-		frame.appendToPane(frame.getTextArea(), botName, Color.RED);
-		frame.appendToPane(frame.getTextArea(), " dice: ", Color.RED);
-		frame.appendToPane(frame.getTextArea(), texto, Color.RED);
+	@OPERATION void show(String texto, String source){
+		frame.appendToPane(frame.getTextArea(), source, Color.RED);
+		frame.appendToPane(frame.getTextArea(), ": ", Color.RED);
+		frame.appendToPane(frame.getTextArea(), texto, Color.BLACK);
 		String salto = System.lineSeparator();
 		frame.appendToPane(frame.getTextArea(), salto, Color.RED);
 	}
@@ -83,6 +82,13 @@ public class Console extends GUIArtifact {
 
 	@OPERATION void setBotMasterName(String name){
         botMasterName = name;
+	}
+	
+	@OPERATION void setHeader(String owner){
+		frame.appendToPane(frame.getTextArea(), "/*  Chat de "+owner+" */", Color.BLUE);
+		String salto = System.lineSeparator();
+		frame.appendToPane(frame.getTextArea(), salto, Color.BLUE);
+		frame.appendToPane(frame.getTextArea(), salto, Color.BLUE);
 	}
 
 }
