@@ -7,12 +7,12 @@
 </category>
 
 <category>
-    <pattern>^ que ^ haciendo</pattern>
+    <pattern>que has hecho hoy</pattern>
     <template>Tareas de la casa, amo.</template>
 </category>
 
 <category>
-    <pattern>^ que demonios ^</pattern>
+    <pattern>por que demonios ^</pattern>
     <template>Lo siento, amo.</template>
 </category>
 

@@ -79,7 +79,7 @@ dinero(3000).
 	!talkRobot.
 +!talkRobot: state(4) <-
 	.println(" esta euforico y habla al robot");
-	!sendMessage("Que andas haciendo?",myRobot);
+	!sendMessage("Que has hecho hoy?",myRobot);
 	.random(R);
 	.wait(R * 3000 + 5000);
 	!talkRobot.	
@@ -104,7 +104,7 @@ dinero(3000).
 	!sendMessage("Hola, que tal has pasado el dia?",C);
 	.random(R);
 	.wait(R * 3000 + 5000);
-	!talkRobot.
+	!talkOwner.
 +!talkOwner: state(4) <-
 	.println(" esta euforico y habla al otro Owner");
 	?compa(C);
@@ -126,7 +126,7 @@ dinero(3000).
 	.random(R);
 	.wait(R * 3000 + 5000);
 	!talkOwner.
-+!talkOwner <- !talkRobot.
++!talkOwner <- !talkOwner.
 
 +!sendMessage(Msg,Ag) <-
 	show(Msg, "Yo");
@@ -138,7 +138,7 @@ dinero(3000).
 	.random(R);	//se despierta en un tiempo aleatorio
 	.wait(R * 4000 + 8000);
 	-+state(4);
-	!sendMessage("Me he despertado");
+	!sendMessage("Me he despertado",myRobot);
 	!cleanHouse;
 	!wakeUp.
 	
@@ -149,16 +149,16 @@ dinero(3000).
    		.random(X); 
 		.wait(X * 4000 + 8000);
 	    .println("El owner pregunta la hora");
-		!sendMessage("Que hora es");
+		!sendMessage("Que hora es",myRobot);
 		!ask_time.
 
 +!ask_time <- !ask_time.
 
 +!gottaGetBeer: .my_name(N) <-
-	!sendMessage("Voy yo a recoger una cerveza al frigorifico");
+	!sendMessage("Voy yo a recoger una cerveza al frigorifico",myRobot);
 	!go_at(N,fridge);
 	!take(fridge,beer);
-	!sendMessage("He cogido una cerveza del frigorifico");
+	!sendMessage("He cogido una cerveza del frigorifico",myRobot);
 	!go_at(N,chair);
 	hand_in(beer);
 	+has(N,beer).
