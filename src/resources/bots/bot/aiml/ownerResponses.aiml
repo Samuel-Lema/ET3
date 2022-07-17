@@ -7,12 +7,12 @@
 </category>
 
 <category>
-    <pattern>^ que ^ haciendo</pattern>
+    <pattern>que ^ haciendo</pattern>
     <template>Hablar con el robot</template>
 </category>
 
 <category>
-    <pattern>^ que demonios ^</pattern>
+    <pattern>^ que demonios haces</pattern>
     <template>Nada, tranquilo</template>
 </category>
 
