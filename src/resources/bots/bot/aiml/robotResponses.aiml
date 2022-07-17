@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+
+<category>
+    <pattern>^ dar un paseo</pattern>
+    <template>Me encantaría, pero soy un robot.</template>
+</category>
+
+<category>
+    <pattern>^ que ^ haciendo</pattern>
+    <template>Tareas de la casa, amo.</template>
+</category>
+
+<category>
+    <pattern>^ que demonios ^</pattern>
+    <template>Lo siento, amo.</template>
+</category>
+
+<category>
+    <pattern>* zzzz *</pattern>
+    <template>Esperar a que te duermas y acuchillarte. Digo... bip bop</template>
+</category>
+
+<category>
+    <pattern>zzzz</pattern>
+    <template>Por fin se duerme el maldito humano.</template>
+</category>
+
+<category>
+    <pattern>^ he despertado</pattern>
+    <template>Buenos días, amo.</template>
+</category>
+
+<category>
+    <pattern>Traeme ^ cerveza ^</pattern>
+    <template>Ahora voy, amo.</template>
+</category>
+
+<category>
+    <pattern>^ que hora es</pattern>
+    <template>No lo sé, no tengo esa funcionalidad instalada.</template>
+</category>
+
+</aiml> 
