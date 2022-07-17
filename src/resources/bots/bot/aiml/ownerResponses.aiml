@@ -2,29 +2,23 @@
 <aiml version="2.0">
 
 <category>
-    <pattern>^ que haces</pattern>
-    <template>Limpiar el local y traerte cerveza, amo.</template>
-</category>
-
-
-<category>
-    <pattern>^ que andas haciendo</pattern>
-    <template>Tareas del hogar, amo.</template>
+    <pattern>^ que tal ^ el dia</pattern>
+    <template>Bien, supongo...</template>
 </category>
 
 <category>
-    <pattern>^ que demonios haces</pattern>
-    <template>Traerte cerveza, amo.</template>
+    <pattern>^ que ^ haciendo</pattern>
+    <template>Hablar con el robot</template>
 </category>
 
 <category>
-    <pattern>^ hacer hoy</pattern>
-    <template>Esperar a que te duermas y acuchillarte. Digo.. bip bop</template>
+    <pattern>^ que demonios ^</pattern>
+    <template>Nada, tranquilo</template>
 </category>
 
 <category>
-    <pattern>zzZZ</pattern>
-    <template>Por fín se duerme el maldito humano.</template>
+    <pattern>estoy cansado ^</pattern>
+    <template>Pídele una cerveza al robot</template>
 </category>
 
 </aiml> 

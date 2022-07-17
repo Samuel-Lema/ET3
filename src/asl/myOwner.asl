@@ -18,6 +18,7 @@ dinero(3000).
 /* subobjectives for cheerUp */
 
 !talkRobotInicial.
+!talkOwnerInicial.
 !cleanHouse.
 !drinkBeer. 
 !wakeUp.
@@ -26,11 +27,13 @@ dinero(3000).
 
 +!setupTool : gui(G) & .my_name(N) <-     
 	makeArtifact(G,"gui.Console",[],GUI);
+	-gui(G);
 	setHeader(N);
     focus(GUI).
 
 +!initBot: botname(N) <-
 	makeArtifact(N,"bot.ChatBOT",["bot"],BOT);
+	-botname(N);
 	focus(BOT);
 	+bot("bot").
 	
@@ -58,52 +61,84 @@ dinero(3000).
 	-answer(Msg)[source(Ag)].
 
 +!talkRobotInicial <-
-	.wait(5000);
+	.random(R);
+	.wait(R * 3000 + 5000);
 	!talkRobot.
+
++!talkOwnerInicial <-
+	.random(R);
+	.wait(R * 3000 + 5000);
+	!talkOwner.
 	
 // Segun el estado del Owner comenta diferentes cosas cuando esta aburrido
 +!talkRobot: state(5) <-
-	.println("Owner esta animado y da conversacion");
-	show("Hola, que haces?","Yo");
-	.send(myRobot, tell, msg("Hola, que haces?"));
-	?compa(C);
-	.send(C, tell, msg("Hola, que haces?"));
-	.wait(5000);
+	.println(" esta animado y habla al robot");
+	!sendMessage("Hola robot, quieres ir a dar un paseo?",myRobot);
+	.random(R);
+	.wait(R * 3000 + 5000);
 	!talkRobot.
 +!talkRobot: state(4) <-
-	.println("Owner esta euforico y da conversacion");
-	show("Hola, que andas haciendo!", "Yo");
-	.send(myRobot, tell, msg("Hola, que andas haciendo!"));
-	?compa(C);
-	.send(C, tell, msg("Hola, que andas haciendo!"));
-	.wait(5000);
+	.println(" esta euforico y habla al robot");
+	!sendMessage("Que andas haciendo?",myRobot);
+	.random(R);
+	.wait(R * 3000 + 5000);
 	!talkRobot.	
 +!talkRobot: state(3) <-
-	.println("Owner esta crispado y da conversacion");
-	show("Que demonios haces!", "Yo");
-	.send(myRobot, tell, msg("Que demonios haces!"));
-	?compa(C);
-	.send(C, tell, msg("Que demonios haces!"));
-	.wait(5000);
+	.println(" esta crispado y habla al robot");
+	!sendMessage("Por que demonios no esta limpia la casa?",myRobot);
+	.random(R);
+	.wait(R * 3000 + 5000);
 	!talkRobot.
 +!talkRobot: state(2) <-
-	.println("Owner esta amodorrado y da conversacion");
-	show("Que vas a zzZZ hacer hoy?", "Yo");
-	.send(myRobot, tell, msg("Que vas a zzZZ hacer hoy?"));
-	?compa(C);
-	.send(C, tell, msg("Que vas a zzZZ hacer hoy?"));
-	.wait(5000);
+	.println(" esta amodorrado y habla al robot");
+	show("Que vas a... zzZZ... hacer hoy?", "Yo");
+	!sendMessage("Que vas a zzZZ hacer hoy?",myRobot);
+	.random(R);
+	.wait(R * 3000 + 5000);
 	!talkRobot.
-	
 +!talkRobot <- !talkRobot.
 
++!talkOwner: state(5) <-
+	.println(" esta animado y habla al otro Owner");
+	?compa(C);
+	!sendMessage("Hola, que tal has pasado el dia?",C);
+	.random(R);
+	.wait(R * 3000 + 5000);
+	!talkRobot.
++!talkOwner: state(4) <-
+	.println(" esta euforico y habla al otro Owner");
+	?compa(C);
+	!sendMessage("Que andas haciendo?",C);
+	.random(R);
+	.wait(R * 3000 + 5000);
+	!talkOwner.	
++!talkOwner: state(3) <-
+	.println(" esta crispado y habla al otro Owner");
+	?compa(C);
+	!sendMessage("Que demonios haces!",C);
+	.random(R);
+	.wait(R * 3000 + 5000);
+	!talkOwner.
++!talkOwner: state(2) <-
+	.println(" esta amodorrado y habla al otro Owner");
+	?compa(C);
+	!sendMessage("Estoy cansado...",C);
+	.random(R);
+	.wait(R * 3000 + 5000);
+	!talkOwner.
++!talkOwner <- !talkRobot.
+
++!sendMessage(Msg,Ag) <-
+	show(Msg, "Yo");
+	.send(Ag, tell, msg(Msg)).
+
 +!wakeUp: state(1) <-
-	.println("Owner esta dormido y se escucha zzZZZ");
-	.send(myRobot,tell,msg("zzZZ"));
+	.println(" esta dormido y se escucha zzZZZ");
+	!sendMessage("zzZZ", myRobot);
 	.random(R);	//se despierta en un tiempo aleatorio
 	.wait(R * 4000 + 8000);
 	-+state(4);
-	.send(myRobot,tell,msg("Me he despertado"));
+	!sendMessage("Me he despertado");
 	!cleanHouse;
 	!wakeUp.
 	
@@ -114,16 +149,16 @@ dinero(3000).
    		.random(X); 
 		.wait(X * 4000 + 8000);
 	    .println("El owner pregunta la hora");
-		.send(myRobot, tell, msg("Que hora es"));
+		!sendMessage("Que hora es");
 		!ask_time.
 
 +!ask_time <- !ask_time.
 
 +!gottaGetBeer: .my_name(N) <-
-	.send(myRobot, tell, "Voy yo a recoger una cerveza al frigorifico");
+	!sendMessage("Voy yo a recoger una cerveza al frigorifico");
 	!go_at(N,fridge);
 	!take(fridge,beer);
-	.send(myRobot, tell, "He cogido una cerveza del frigorifico");
+	!sendMessage("He cogido una cerveza del frigorifico");
 	!go_at(N,chair);
 	hand_in(beer);
 	+has(N,beer).
@@ -183,7 +218,7 @@ dinero(3000).
 		!gottaGetBeer;
 	}else{ //la otra mitad se la pide al robot
 		//.println("El Owner decidió pedirle la cerveza al robot");
-		.send(myRobot, tell, msg("Traeme una cerveza."));
+		!sendMessage("Traeme una cerveza.",myRobot);
 		.send(myRobot, tell, asked(beer));
 		.println("Owner ha pedido una cerveza al robot.");
 	}
